@@ -1,0 +1,15 @@
+node_modules/
+dist/
+web/client/dist/
+
+# profiling / diagnostics artifacts produced by lessons
+*.heapsnapshot
+*.heapprofile
+*.cpuprofile
+*.log
+isolate-*.log
+v8.log
+
+# local scratch work
+playground/*.local.*
+.DS_Store

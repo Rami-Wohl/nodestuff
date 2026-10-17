@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "lib": ["ES2024", "DOM", "DOM.Iterable"],
+    "types": ["vite/client"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowJs": false,
+    "checkJs": false
+  },
+  "include": ["src", "vite.config.ts"],
+  // The root config excludes web/client; an explicit list overrides the inherited one.
+  "exclude": ["dist"]
+}

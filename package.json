@@ -1,0 +1,27 @@
+{
+  "name": "node-fundamentals",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A bottom-up, experiment-driven exploration of JavaScript, V8, Node.js and libuv for experienced application developers.",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "lesson": "node scripts/lesson.mjs",
+    "web": "node scripts/web.mjs",
+    "web:server": "node --watch web/server/server.ts",
+    "web:client": "vite web/client",
+    "test": "node --test",
+    "lint": "eslint .",
+    "typecheck": "tsc -p tsconfig.json && tsc -p web/client/tsconfig.json"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^24.19.2",
+    "eslint": "^10.13.0",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.71.2",
+    "vite": "^8.3.4"
+  }
+}

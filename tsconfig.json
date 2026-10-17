@@ -1,0 +1,41 @@
+{
+  // Root config: Node-side code (lessons, scripts, shared helpers, web/server).
+  // The browser client has its own config in web/client/tsconfig.json.
+  "compilerOptions": {
+    "target": "ES2024",
+    "lib": ["ES2024"],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "types": ["node"],
+
+    // Strictness. `any` is additionally forbidden by ESLint.
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+
+    // We never compile: Node strips types at load time (`node file.ts`).
+    // These options keep the TypeScript we write inside what Node can strip.
+    "noEmit": true,
+    "verbatimModuleSyntax": true,
+    "erasableSyntaxOnly": true,
+    "allowImportingTsExtensions": true,
+
+    // Plain-JavaScript lessons are type-checked too (JSDoc where needed).
+    "allowJs": true,
+    "checkJs": true,
+
+    "skipLibCheck": true
+  },
+  "include": ["modules", "scripts", "shared", "playground", "web/server", "eslint.config.js"],
+  "exclude": [
+    "node_modules",
+    "web/client",
+    // Fixtures contain *intentional* syntax and runtime errors.
+    "**/fixtures/**",
+    // Exercise starters that import a broken fixture: tsc follows imports even
+    // into excluded files, so the importer has to be excluded as well.
+    "**/exercises/02-make-it-catchable.mjs"
+  ]
+}

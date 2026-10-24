@@ -19,7 +19,8 @@ territory: mental model, prediction, experiment, explanation, demo.
    is the best test of understanding it.
 
 The file-by-file order inside a lesson (which README sections to read before
-and after running) is in the root `README.md` under "Order of a lesson".
+and after running) is in the root `README.md` under "Order of a lesson". The
+rules for *writing* lessons are in `LESSON_POLICY.md`.
 
 ## Suggested progression
 

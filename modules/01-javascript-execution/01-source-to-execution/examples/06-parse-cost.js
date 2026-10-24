@@ -18,11 +18,11 @@
 //       node modules/01-javascript-execution/01-source-to-execution/examples/06-parse-cost.js path/to/some/big.js
 
 import { spawnSync } from 'node:child_process';
-import { mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
-import os from 'node:os';
+import { readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { performance } from 'node:perf_hooks';
 import vm from 'node:vm';
+import { createTempDir } from '../../../../shared/temp-dir.js';
 
 /**
  * @template T
@@ -77,18 +77,27 @@ function measureCaches(source, filename) {
   // cache hands back the already-compiled script. No parsing happens.
   const again = timed(() => new vm.Script(source, { filename }));
 
-  // Fresh process: write source + cache to disk, let a child consume them.
-  const dir = mkdtempSync(path.join(os.tmpdir(), 'parse-cost-'));
-  const sourceFile = path.join(dir, path.basename(filename));
-  const cacheFile = `${sourceFile}.cache`;
-  writeFileSync(sourceFile, source);
-  writeFileSync(cacheFile, cachedData);
-  const child = spawnSync(process.execPath, [process.argv[1] ?? '', '--consume-cache', sourceFile, cacheFile], {
-    encoding: 'utf8',
-  });
-  if (child.status !== 0) throw new Error(`child failed: ${child.stderr}`);
+  // Fresh process: write source + cache to a temp directory, let a child
+  // consume them, and delete them afterwards. Files are an OS resource:
+  // unlike heap objects, nothing frees them when the process ends. The helper
+  // only ever deletes the two files registered here, then the empty directory.
+  const temp = createTempDir('parse-cost');
   /** @type {{ ms: number, rejected: boolean }} */
-  const fromCache = JSON.parse(child.stdout);
+  let fromCache;
+  try {
+    const sourceFile = temp.file(path.basename(filename));
+    const cacheFile = temp.file(`${path.basename(filename)}.cache`);
+    writeFileSync(sourceFile, source);
+    writeFileSync(cacheFile, cachedData);
+    const child = spawnSync(process.execPath, [process.argv[1] ?? '', '--consume-cache', sourceFile, cacheFile], {
+      encoding: 'utf8',
+      timeout: 60_000, // a hung child must not hang the experiment
+    });
+    if (child.status !== 0) throw new Error(`child failed: ${child.error?.message ?? child.stderr}`);
+    fromCache = JSON.parse(child.stdout);
+  } finally {
+    temp.cleanup();
+  }
 
   console.log(`  compile, fresh:                         ${ms(fresh.ms)}`);
   console.log(`  compile again, same process:            ${ms(again.ms)}   (in-memory compilation cache)`);

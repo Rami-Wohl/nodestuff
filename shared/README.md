@@ -12,3 +12,4 @@ Rules for this folder:
 | File | Purpose |
 | --- | --- |
 | `run-node.js` | Run a script in a fresh Node process and print its stdout/stderr/exit code. Used by lessons that compare several small programs side by side. |
+| `temp-dir.js` | `createTempDir(prefix)`: a fresh directory under `os.tmpdir()` plus a guarded `cleanup()` that deletes only registered files, by exact path, and removes the directory non-recursively. The only sanctioned way for a lesson to delete anything (see `LESSON_POLICY.md` §6). Tested in `temp-dir.test.js`. |

@@ -13,11 +13,20 @@
 
 ## What I observed
 
-_Which predictions were wrong, and what did the output actually show?_
+Run on 2026-10-24, Node 24, Apple M4. Predictions 1–5 and 7 matched the output exactly.
+
+- 6 was partly wrong: `console` exists in the bare V8 context (`object` in both columns). Its `console.log` printed nothing there. Node adds 68 names; the list is mostly Web API names (URL, fetch, streams, AbortController, TextEncoder …). `require`, `module`, `__dirname` are undefined in *both* columns because example 4 is an ES module.
+- 8 was wrong on magnitude: compile of 5.7 MB took 65 ms, not ~1 s (≈11 ms/MB). Scaling was linear as predicted: 1.1 / 10.5 / 65 ms for 1k / 10k / 50k functions. First calls (125 ms) cost more than the compile, as predicted, but for a different reason than I gave (see corrections). Second calls: 3.6 ms. Same-process recompile: 0.1 ms (in-memory compilation cache). Fresh process with code cache: 8 ms vs 59 ms fresh.
+- Not predicted, noticed: two different ReferenceError messages in experiment 2 ("Cannot access 'letLater' before initialization" vs "neverDeclared is not defined"); calling a `var`-held function expression early is a TypeError, not a ReferenceError. `eval("{ answer: 42 }")` is `42` (block + label), `eval("({ answer: 42 })")` is an object.
+- Experiment 7 printed only `add(2, 3) = 5` from the runner; the bytecode needs `--print-bytecode --print-bytecode-filter=add`.
 
 ## Corrections to my mental model
 
-_Write the corrected rule in one sentence each. Example shape: "I thought X; actually Y, because Z."_
+- I thought `console` is something Node adds; actually a bare V8 context already has a `console` object (output goes to an attached debugger), and Node *replaces* it with one that writes to stdout. The engine ships more than ECMA-262: `Intl` (ECMA-402), `WebAssembly` and the `console` stub are engine-provided but specified elsewhere.
+- I said function bodies are "evaluated" in phase 1; actually they are *parsed* (and in V8 only *pre-parsed*: syntax-checked, scope recorded, no bytecode). Evaluation is phase 2 and never happens for an uncalled function.
+- I thought compiling ~5 MB takes about a second; actually ~65 ms (~11 ms/MB here). The "scales with size" intuition was right; the constant can only come from measuring.
+- I thought first calls are expensive because "no caches are filled yet"; actually the function bodies were never compiled during the compile step. The first call does the deferred full parse + bytecode generation. That is lazy compilation, not a cold cache; `--no-lazy` moves the cost into the compile column instead of removing it (variation 7).
+- "Cache" is the right word for two other things: V8's in-memory compilation cache (same source + same origin in one process → ~0 ms) and the serializable code cache that a fresh process can load instead of parsing (8 ms vs 59 ms).
 
 ## Open questions
 

@@ -66,3 +66,13 @@ const server = createServer(async (request, response) => {
 server.listen(PORT, () => {
   console.log(`demo backend listening on http://localhost:${PORT}  (routes: ${Object.keys(routes).join(', ')})`);
 });
+
+// A listening socket is released by the OS when the process dies, so this is
+// not needed for correctness. It makes stopping explicit and immediate, which
+// matters under `node --watch`, where every file change sends SIGTERM.
+for (const signal of ['SIGINT', 'SIGTERM'] as const) {
+  process.on(signal, () => {
+    server.close(() => process.exit(0));
+    server.closeAllConnections();
+  });
+}

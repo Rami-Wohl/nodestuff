@@ -17,24 +17,47 @@ const steps = [
 
 const rl = createInterface({ input: process.stdin, output: process.stdout });
 
-for (const [index, step] of steps.entries()) {
-  const url = new URL(`../examples/fixtures/${step.file}`, import.meta.url);
-  const source = readFileSync(url, 'utf8');
+// Ctrl-C while a question is pending: close the interface (which restores the
+// terminal from raw mode) before leaving, instead of exiting mid-prompt.
+rl.on('SIGINT', () => {
+  rl.close();
+  console.log('\n(aborted)');
+  process.exit(130);
+});
 
-  console.log(`\n${'═'.repeat(70)}\n ${index + 1}/${steps.length}  ${step.file}\n${'═'.repeat(70)}`);
-  source
-    .trimEnd()
-    .split('\n')
-    .forEach((line, i) => console.log(`${String(i + 1).padStart(3)} │ ${line}`));
+// Input ending (Ctrl-D, or a pipe running dry) while a question is pending
+// would leave that `await` unsettled forever; end cleanly instead.
+let closingOnPurpose = false;
+rl.on('close', () => {
+  if (!closingOnPurpose) {
+    console.log('\n(input ended before the demo finished)');
+    process.exit(0);
+  }
+});
 
-  await rl.question(`\n${step.question}  (press Enter to run)`);
-  printRun(runNode(url));
+try {
+  for (const [index, step] of steps.entries()) {
+    const url = new URL(`../examples/fixtures/${step.file}`, import.meta.url);
+    const source = readFileSync(url, 'utf8');
+
+    console.log(`\n${'═'.repeat(70)}\n ${index + 1}/${steps.length}  ${step.file}\n${'═'.repeat(70)}`);
+    source
+      .trimEnd()
+      .split('\n')
+      .forEach((line, i) => console.log(`${String(i + 1).padStart(3)} │ ${line}`));
+
+    await rl.question(`\n${step.question}  (press Enter to run)`);
+    printRun(runNode(url));
+  }
+
+  console.log(`\n${'═'.repeat(70)}\n Bonus: node --check  (parse only, never execute)\n${'═'.repeat(70)}`);
+  await rl.question('What exit code does --check give the runtime-error file? And the syntax-error file?  (Enter)');
+  for (const name of ['runtime-error-at-end.js', 'syntax-error-at-end.js']) {
+    printRun(runNode(fileURLToPath(new URL(`../examples/fixtures/${name}`, import.meta.url)), ['--check']));
+  }
+} finally {
+  // Whatever happened above, the readline interface must not outlive the demo:
+  // an open interface keeps the process alive and the terminal in raw mode.
+  closingOnPurpose = true;
+  rl.close();
 }
-
-console.log(`\n${'═'.repeat(70)}\n Bonus: node --check  (parse only, never execute)\n${'═'.repeat(70)}`);
-await rl.question('What exit code does --check give the runtime-error file? And the syntax-error file?  (Enter)');
-for (const name of ['runtime-error-at-end.js', 'syntax-error-at-end.js']) {
-  printRun(runNode(fileURLToPath(new URL(`../examples/fixtures/${name}`, import.meta.url)), ['--check']));
-}
-
-rl.close();

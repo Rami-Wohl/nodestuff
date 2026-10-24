@@ -229,7 +229,7 @@
 
 ## Experiments completed
 
-_None yet. Log each experiment as `lesson id · example file · one-line result`._
+- 01.01 · examples 01–07 · all run on 2026-10-24; predictions 7/8 correct on outcome. Wrong: `console` is engine-provided (Q6); compile cost was 65 ms not ~1 s, and first-call cost is lazy compilation, not a cold cache (Q8). Still to do: `--print-bytecode` run of example 07, section 9 variations, exercises, knowledge check, demo rehearsal.
 
 ## Concepts that still feel unclear
 

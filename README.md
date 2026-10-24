@@ -116,6 +116,13 @@ area and a reset. Demos that need Node behavior (memory, event-loop delay,
 workers, streams) call the backend under `/api/`. Nothing is built on top of a
 UI framework on purpose: the concepts should stay visible.
 
+## Authoring rules
+
+[`LESSON_POLICY.md`](./LESSON_POLICY.md) is the checklist for writing lessons:
+anatomy, teaching rules, code rules, measurement honesty, resource cleanup,
+the extra checks around deleting files, and the verification steps before a
+lesson counts as ready.
+
 ## Status
 
 See [`PROGRESS.md`](./PROGRESS.md). Lessons are written one at a time, in

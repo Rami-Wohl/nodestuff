@@ -11,6 +11,14 @@ npm run lesson -- 01.01 --demo     # the coworker demo
 npm test                           # the assertions this lesson makes
 ```
 
+**How to work through this lesson.** The sections below are in the fixed
+lesson order, which is not the reading order. Read 1–3, then go straight to
+5 and write predictions in `notes.md`. Skip 4 until after the experiment: it
+gives the answers away. Then run 6, observe with 7, read 8, and only then
+read 4. After that: 9 (variations), `exercises/`, 10, 12 (knowledge check),
+rehearse `demo/`, tick `PROGRESS.md`. 13 is optional. Don't read the example
+sources before running them; their header comments state the conclusion.
+
 ---
 
 ## 1. Why this matters
@@ -232,7 +240,7 @@ Commit to specific output, not "an error".
 
 1. `runtime-error-at-end.js` logs two lines, then calls a function that does
    not exist, then logs a third. What appears on stdout? What is the exit code?
-2. `syntax-error-at-end.js` logs two lines, then has `const = 42;` on line 5.
+2. `syntax-error-at-end.js` logs two lines, then has `const = 42;` on line 3.
    What appears on stdout?
 3. `syntax-error-in-uncalled-function.js` logs one line, then declares a
    function with a syntax error in its body. The function is never called.

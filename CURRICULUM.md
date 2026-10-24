@@ -18,6 +18,9 @@ territory: mental model, prediction, experiment, explanation, demo.
 4. Each lesson has a short coworker demo. Rehearse it once; explaining a thing
    is the best test of understanding it.
 
+The file-by-file order inside a lesson (which README sections to read before
+and after running) is in the root `README.md` under "Order of a lesson".
+
 ## Suggested progression
 
 ```

@@ -19,7 +19,7 @@ commit to a prediction, then runs it.
    lines 1 and 2, then a ReferenceError. Say: *execution is top to bottom.*
 
 2. **Syntax error at the end.** "Same question." Most people say lines 1 and 2
-   again. Run it: nothing prints. Ask: *so when did the engine read line 5?*
+   again. Run it: nothing prints. Ask: *so when did the engine read line 3?*
    Answer: before running line 1. The whole file is parsed first.
 
 3. **Syntax error in a function nobody calls.** This is the one that

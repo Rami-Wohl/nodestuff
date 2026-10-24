@@ -57,6 +57,25 @@ npm run lesson -- 01.01 --demo   # run the lesson's coworker demo
 Every example is also an ordinary script, so `node modules/.../examples/x.js`
 works and is what the lesson READMEs show.
 
+### Order of a lesson
+
+The 13 sections of a lesson README are in a fixed order, which is not the
+order to read them in:
+
+1. Read sections 1–3 (why it matters, mental model, terminology).
+2. Skip section 4 for now; it explains what actually happens and spoils the prediction.
+3. Read section 5 and write predictions in the lesson's `notes.md`.
+4. Run `npm run lesson -- <id>`. Don't read the example sources first.
+   `examples/fixtures/` are inputs for the examples, not scripts to run.
+5. Read 7 against the output, then 8. Record observations and corrections in `notes.md`.
+6. Now read section 4, the deep version.
+7. Do section 9 (variations) and `exercises/` (solutions only afterwards).
+8. Read 10, answer 12 in your own words, rehearse `demo/` once.
+9. Tick the lesson in `PROGRESS.md`. Section 13 is optional.
+
+`test/` pins down the claims a lesson makes; read it if you want to see
+exactly what is asserted.
+
 Other commands:
 
 ```sh
